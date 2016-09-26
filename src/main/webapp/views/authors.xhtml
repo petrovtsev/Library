@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<f:view>
+    <h:head>
+        <title>Authors</title>
+    </h:head>
+
+    <h:body>
+
+
+        <h:form id="form" style="width: 700px; margin-left: auto; margin-right: auto">
+            <p:growl id="msgs" showDetail="true"/>
+
+            <p:dataTable id="table" var="a" value="#{authorController.list}"
+                         selection="#{authorController.selectedAuthors}"
+                         editable="true"
+                         rowKey="#{a.id}" style="margin-bottom:0">
+                <f:facet name="header">
+                    Authors
+                </f:facet>
+
+                <p:ajax event="rowEdit" listener="#{authorController.onRowEdit}"  update=":form:msgs" />
+                <p:ajax event="rowEditCancel" listener="#{authorController.onRowCancel}" update=":form:msgs" />
+
+                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+
+                <p:column headerText="Id" style="width: 45px">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{a.id}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="modelInput" value="#{a.id}" style="width:100%" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Name">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{a.name}" /></f:facet>
+                        <f:facet name="input"><p:inputText value="#{a.name}" style="width:96%" label="Year"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="City">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{a.city}" /></f:facet>
+                        <f:facet name="input"><p:inputText value="#{a.city}" style="width:96%" label="Year"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column style="width:32px">
+                    <p:rowEditor />
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton  value="Add" oncomplete="PF('addDialog').show()"  />
+
+                    <p:commandButton update=":form:listAuthor" value="Delete" oncomplete="PF('deleteDialog').show()"  />
+
+                    <p:commandButton value="Нome" id="index" action="index" />
+                </f:facet>
+            </p:dataTable>
+
+
+
+            <p:dialog header="Delete the selected authors?" widgetVar="deleteDialog" id="delete" modal="true" showEffect="fade"
+                      hideEffect="fade" resizable="false" width="400">
+                <p:outputPanel id="listAuthor" style="text-align:center;">
+                    <ui:repeat value="#{authorController.selectedAuthors}" var="a">
+                        <h:outputText value="#{a.id} - #{a.name}" style="display:block"/>
+                    </ui:repeat>
+
+                </p:outputPanel>
+                <p:commandButton value="Yes"
+                                 action="#{authorController.delAuthor}"
+                                 update="table"
+                                 style="margin-left: 70px"
+                                 icon="ui-icon-check"
+                                 styleClass="ui-confirmdialog-yes"
+                                 onclick="PF('deleteDialog').hide();"/>
+
+                <p:commandButton value="No"
+                                 style="margin-right: 70px"
+                                 icon="ui-icon-close"
+                                 styleClass="ui-confirmdialog-no"
+                                 onclick="PF('deleteDialog').hide();"  />
+            </p:dialog>
+
+            <p:dialog header="Add author" widgetVar="addDialog" id="add" modal="true" showEffect="fade"
+                      hideEffect="fade" resizable="false" width="400">
+                <h:panelGrid columns="2" cellpadding="5">
+                    <h:outputText value="id: " />
+                    <p:inputText id="Id" value="#{authorController.id}" />
+
+                    <h:outputText value="Name: " />
+                    <p:inputText id="Name" value="#{authorController.name}" />
+
+                    <h:outputText value="City: " />
+                    <p:inputText id="City" value="#{authorController.city}" />
+                </h:panelGrid>
+                <p:commandButton value="Add"
+                                 actionListener="#{authorController.addAuthor}"
+                                 update="table add"
+                                 process="add"
+                                 ajax="true"
+                                 style="margin-left: 70px"
+                                 icon="ui-icon-check"
+                                 styleClass="ui-confirmdialog-yes"
+                                 onclick="PF('addDialog').hide();"/>
+                <p:commandButton value="Cancel"
+                                 style="margin-right: 70px"
+                                 icon="ui-icon-close"
+                                 styleClass="ui-confirmdialog-no"
+                                 onclick="PF('addDialog').hide();"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+
+</f:view>
+
+</html>
